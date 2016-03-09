@@ -45,7 +45,7 @@ class Lista():
             raise ListaVaziaErro
 
     def adicionar_a_esquerda(self,valor):
-        noh = Noh(valor)
+        noh=Noh(valor)
         if self.tam==0:
             self.primeiro=noh
             self.tam=self.tam+1
