@@ -5,7 +5,7 @@ class PilhaVaziaErro(Exception):
 
 class Pilha():
     def __init__(self):
-        self.lista = []
+        self.lista=[]
 
     def topo(self):
         if self.lista:
@@ -14,10 +14,10 @@ class Pilha():
 
     def vazia(self):
         return not bool(self.lista)
-
-    def empilhar(self, valor):
+        
+    def empilhar(self,valor):
         self.lista.append(valor)
-
+        
     def desempilhar(self):
         try:
             return self.lista.pop()
@@ -36,22 +36,19 @@ def esta_balanceada(expressao):
     Memoria: O(n)
     """
     if expressao:
-        pilha = Pilha()
-
+        pilha=Pilha()
         if expressao[0] in '}])':
             return False
-
         for i in expressao:
             if i in '{[(':
                 pilha.empilhar(i)
             elif i in '}])':
-                if i=='}' and pilha.desempilhar() != '{':
+                if i=='}' and pilha.desempilhar()!='{':
                     return False
-                elif i==']' and pilha.desempilhar() != '[':
+                elif i==']' and pilha.desempilhar()!='[':
                     return False
-                elif i==')' and pilha.desempilhar() != '(':
+                elif i==')' and pilha.desempilhar()!='(':
                     return False
-
         if pilha.vazia():
             return True
         return False
