@@ -1,3 +1,4 @@
+#Nada de entrega o código não estava com recursão. Alterei ele mais para aprender, porém não é válido mais para a matéria.
 import unittest
 
 def min_max(lista,maximo,minimo,x):
