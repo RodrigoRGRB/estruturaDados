@@ -1,29 +1,35 @@
 import unittest
+from collections import deque
+
+class Pilha():
+    def __init__(self):
+        self._lista = deque()
+
+    def __len__(self):
+        return len(self._lista)
+
+    def vazia(self):
+        return not bool(self._lista)
+
+    def topo(self):
+        if self._lista:
+            return self._lista[-1]
+
+        raise PilhaVaziaErro()
+
+    def empilhar(self, valor):
+        self._lista.append(valor)
+
+    def desempilhar(self):
+        try:
+            return self._lista.pop()
+        except IndexError:
+            raise PilhaVaziaErro()
+
 
 class PilhaVaziaErro(Exception):
     pass
 
-class Pilha():
-    def __init__(self):
-        self.lista=[]
-
-    def empilhar(self,valor):
-        self.lista.append(valor)
-
-    def vazia(self):
-        return not bool(self.lista)
-
-    def topo(self):
-        try:
-            return self.lista[-1]
-        except IndexError:
-            raise PilhaVaziaErro
-
-    def desempilhar(self):
-        if (self.lista):
-            return self.lista.pop(-1)
-        else:
-            raise PilhaVaziaErro
 
 class PilhaTestes(unittest.TestCase):
     def test_topo_lista_vazia(self):

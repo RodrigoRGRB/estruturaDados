@@ -1,45 +1,29 @@
-# Exercício de avaliação de expressão aritmética.
-# Só podem ser usadas as estruturas Pilha e Fila implementadas em aulas anteriores.
-# Deve ter análise de tempo e espaço para função avaliação
-
 def num(s):
     try:
-        s = int(s)
+        s=int(s)
         return True
     except ValueError:
         return False
 
-
 from aula5.fila import Fila
-from aula5.pilha import Pilha
-
+from aula4.pilha import Pilha
 
 class ErroLexico(Exception):
     pass
 
-
 class ErroSintatico(Exception):
     pass
 
-
 def analise_lexica(expressao):
-    """
-    Executa análise lexica transformando a expressao em fila de objetos:
-    Transforma inteiros em ints
-    Flutuantes em floats
-    e verificar se demais caracteres são validos: +-*/(){}[]
-    :param expressao: string com expressao a ser analisada
-    :return: fila com tokens
-    """
 
     def caracteres(param1):
         return param1 in "(){.}[]+-*/"
 
-    fila = Fila()
-    count = 0
-    pilha = Pilha()
-    while count != len(expressao):
-        if not (caracteres(expressao[count]) or num(expressao[count])):
+    fila=Fila()
+    count=0
+    pilha=Pilha()
+    while count!=len(expressao):
+        if not(caracteres(expressao[count]) or num(expressao[count])):
             raise ErroLexico
         else:
             if caracteres(expressao[count]):
@@ -50,77 +34,67 @@ def analise_lexica(expressao):
                 if pilha.vazia():
                     pilha.empilhar(expressao[count])
                 else:
-                    final = pilha.desempilhar()
-                    pilha.empilhar(final + expressao[count])
-        count += 1
+                    final=pilha.desempilhar()
+                    pilha.empilhar(final+expressao[count])
+        count+=1
     if not pilha.vazia():
         fila.enfileirar(pilha.desempilhar())
     return fila
 
-
 def analise_sintatica(fila):
-    """
-    Função que realiza analise sintática de tokens produzidos por analise léxica.
-    Executa validações sintáticas e se não houver erro retorn fila_sintatica para avaliacao
 
-    :param fila: fila proveniente de análise lexica
-    :return: fila_sintatica com elementos tokens de numeros
-    """
-    novafila = Fila()
+    novafila=Fila()
     if fila.vazia():
         raise ErroSintatico;
-    save = ''
+    save=''
     while not fila.vazia():
-        item = fila.desenfileirar()
+        item=fila.desenfileirar()
         if num(item):
-            save = int(item)
+            save=int(item)
             if fila.vazia():
                 novafila.enfileirar(save)
                 return novafila
-            if fila.primeiro() != '.':
+            if fila.primeiro()!='.':
                 novafila.enfileirar(save)
-        elif item == '.':
-            item = fila.desenfileirar()
-            save = float(save)
-            save += (float(item)) / (10 ** (len(item)))
+        elif item=='.':
+            item=fila.desenfileirar()
+            save=float(save)
+            save+=(float(item))/(10**(len(item)))
             novafila.enfileirar(save)
         else:
             novafila.enfileirar(item)
     return novafila
 
-
 def avaliar(expressao):
-    """
-    Função que avalia expressão aritmetica retornando se valor se não houver nenhum erro
-    :param expressao: string com expressão aritmética
-    :return: valor númerico com resultado
-    """
-    fila = analise_sintatica(analise_lexica(expressao))
+
+    fila=analise_sintatica(analise_lexica(expressao))
     if fila.vazia():
-        raise ErroSintatico  # corrigido erro Vazio
-    item = fila.desenfileirar()
+        #erro vazio
+        raise ErroSintatico
+    item=fila.desenfileirar()
     if num(item):
-        valor = item
+        valor=item
     if fila.vazia():
         return item
-    while not fila.vazia():  # iteração da fila
-        item = fila.desenfileirar()  # Desenfileiramento
-        if num(item) or item in ('+-*/'):  # Condição Excluir Parenteses
+    while not fila.vazia():
+        item=fila.desenfileirar()
+        #codição de exclusão parenteses
+        if num(item) or item in ('+-*/'):
             if not num(item):
-                if item in '*':  # Interpletando Caractere
-                    valor *= fila.desenfileirar()  # Função proximo da fila valor elo proximo lista
-                if item in '/':  # Interpletando Caractere
-                    valor /= fila.desenfileirar()  # Função proximo da fila valor elo proximo lista
-                if item in '+':  # Interpletando Caractere
-                    valor += fila.desenfileirar()  # Função proximo da fila valor elo proximo lista
-                if item in '-':  # Interpletando Caractere
-                    valor -= fila.desenfileirar()  # Função proximo da fila valor elo proximo lista
+                #verifica a operação
+                if item in '*':
+                    valor*=fila.desenfileirar()
+                if item in '/':
+                    valor/=fila.desenfileirar()
+                if item in '+':
+                    valor+=fila.desenfileirar()
+                if item in '-':
+                    valor-=fila.desenfileirar()
             else:
-                valor = item
-    return valor #Retorno com Valor
+                valor=item
+    return valor #retorno do resultado
 
 import unittest
-
 
 class AnaliseLexicaTestes(unittest.TestCase):
     def test_expressao_vazia(self):
