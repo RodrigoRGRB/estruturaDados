@@ -15,7 +15,6 @@ class ErroSintatico(Exception):
     pass
 
 def analise_lexica(expressao):
-
     def caracteres(param1):
         return param1 in "(){.}[]+-*/"
 
@@ -42,7 +41,6 @@ def analise_lexica(expressao):
     return fila
 
 def analise_sintatica(fila):
-
     novafila=Fila()
     if fila.vazia():
         raise ErroSintatico;
@@ -66,33 +64,80 @@ def analise_sintatica(fila):
     return novafila
 
 def avaliar(expressao):
+    if expressao:
+        fila=analise_sintatica(analise_lexica(expressao))
 
-    fila=analise_sintatica(analise_lexica(expressao))
-    if fila.vazia():
-        #erro vazio
-        raise ErroSintatico
-    item=fila.desenfileirar()
-    if num(item):
-        valor=item
-    if fila.vazia():
-        return item
-    while not fila.vazia():
-        item=fila.desenfileirar()
-        #codição de exclusão parenteses
-        if num(item) or item in ('+-*/'):
-            if not num(item):
-                #verifica a operação
-                if item in '*':
-                    valor*=fila.desenfileirar()
-                if item in '/':
-                    valor/=fila.desenfileirar()
-                if item in '+':
-                    valor+=fila.desenfileirar()
-                if item in '-':
-                    valor-=fila.desenfileirar()
-            else:
-                valor=item
-    return valor #retorno do resultado
+        if fila.__len__()==1:
+            return fila.primeiro()
+        else:
+            pilha=Pilha()
+            for i in range(fila.__len__()):
+                pilha.empilhar(fila._deque[i])
+
+                if pilha.__len__()>=3 and str(pilha.topo()) not in '-+*/(){}[]':
+                    valor=pilha.topo()
+                    pilha.desempilhar()
+                    #verificação de sinais
+                    if pilha.topo()=='+':
+                        pilha.desempilhar()
+                        valor=pilha.desempilhar()+valor
+                        pilha.empilhar(valor)
+                        valor=''
+                    elif pilha.topo()=='-':
+                        pilha.desempilhar()
+                        valor=pilha.desempilhar()-valor
+                        pilha.empilhar(valor)
+                        valor=''
+                    elif pilha.topo()=='*':
+                        pilha.desempilhar()
+                        valor=pilha.desempilhar()*valor
+                        pilha.empilhar(valor)
+                        valor=''
+                    elif pilha.topo()=='/':
+                        pilha.desempilhar()
+                        valor=pilha.desempilhar()/valor
+                        pilha.empilhar(valor)
+                        valor=''
+                    else:
+                        pilha.empilhar(valor)
+
+                elif str(pilha.topo()) in ')}]' and i==fila.__len__() - 1:
+                    pilha.desempilhar()
+
+                    while len(pilha)>1:
+                        if str(pilha.topo()) not in '-+*/(){}[]':
+                            valor=pilha.topo()
+                            pilha.desempilhar()
+                            #verificação de sinais
+                            if pilha.topo()=='+':
+                                pilha.desempilhar()
+                                valor=pilha.desempilhar()+valor
+                                pilha.empilhar(valor)
+                                valor=''
+                            elif pilha.topo()=='-':
+                                pilha.desempilhar()
+                                valor=pilha.desempilhar()-valor
+                                pilha.empilhar(valor)
+                                valor=''
+                            elif pilha.topo()=='*':
+                                pilha.desempilhar()
+                                valor=pilha.desempilhar()*valor
+                                pilha.empilhar(valor)
+                                valor=''
+                            elif pilha.topo()=='/':
+                                pilha.desempilhar()
+                                valor=pilha.desempilhar()/valor
+                                pilha.empilhar(valor)
+                                valor=''
+                            elif str(pilha.topo()) in '(){}[]':
+                                pilha.desempilhar()
+                                pilha.empilhar(valor)
+                            else:
+                                pilha.empilhar(valor)
+                        else:
+                            pilha.desempilhar()
+            return pilha.topo()
+    raise ErroSintatico()
 
 import unittest
 
