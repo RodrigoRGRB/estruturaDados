@@ -4,12 +4,12 @@ def bubble_sort(seq):
     n=len(seq)-1
     for i_corrente in range(n):
         for i in range(n):
-            if seq[i] > seq[i+1]:
-                seq[i],seq[i+1] = seq[i+1], seq[i];
-                flag = True
-        if (flag == False):
+            if seq[i]>seq[i+1]:
+                seq[i],seq[i+1]=seq[i+1],seq[i]
+                flag=True
+        if (flag==False):
              break
-        flag = False
+        flag=False
     return seq
 
 class OrdenacaoTestes(unittest.TestCase):
